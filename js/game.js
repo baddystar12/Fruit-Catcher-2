@@ -1,6 +1,5 @@
 class Game{
     constructor(){
-
     }
     getState() {
         var gameStateRef = database.ref('gameState');
@@ -39,36 +38,50 @@ class Game{
         
                 form.hide();
                 player.getRankCount();
-                player.updateRankCount();
+                //player.updateRankCount();
                 Player.getPlayerInfo();
                  image(back_img, 0, 0, 1000, 800);
                  var x =100;
                  var y=200;
                  var index =0;
                  drawSprites();
+                 database.ref("players/player1").on("value", (data)=>{
+                     names = data.val();
+                     name1 = names.name;
+                 });
+                 database.ref("players/player2").on("value", (data)=>{
+                     names = data.val();
+                     name2 = names.name;
+                 });
                  for(var plr in allPlayers){
                      index = index+1;
-                     x = 500-allPlayers[plr].distance;
+                     x = 200+allPlayers[plr].distance;
                      y=500;
                      
                      players[index -1].x = x;
                      players[index - 1].y = y;
                        
-                     if(index === player.index){
-                         
+                     if(index === 1){
                          fill("black");
                          textSize(25);
-                         text(allPlayers[plr].name ,x-25,y+25);
-
-                         
+                         text(name1 ,x-25,y+25);   
                      } 
+                     if(index===2){
+                         fill("black");
+                         textSize(25);
+                         text(name2, x-25, y+50);
+                     }
+                     textSize(25);
+                     fill("white");
+                     text(name1+":"+allPlayers.player1.score, 50,50);
+                     text(name2+":"+allPlayers.player2.score, 50,100);
                  }
                 if (keyIsDown(RIGHT_ARROW) && player.index !== null) {
-                    player.distance -= 10
+                    player.distance += 10
                     player.update();
                 }
                 if (keyIsDown(LEFT_ARROW) && player.index !== null) {
-                    player.distance += 10
+                    player.distance -= 10
                     player.update();
                 }
             
@@ -93,14 +106,14 @@ class Game{
                  }
                  
                   if (player.index !== null) {
-                     for(var i=0; i<ffruitGroup.length; i++){
+                     for(var i=0; i<fruitGroup.length; i++){
                         if(fruitGroup.get(i).isTouching(players)){
                             fruitGroup.get(i).destroy();
                             player.score = player.score+1;
                             player.update();
                             score = player.score;
                             if(score===10){
-                                gameState(2);
+                                gameState = 2;
                                 player.rank = playerRank;
                                 playerRank++;
                                 player.updateRankCount(playerRank);
